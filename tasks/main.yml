@@ -1,0 +1,60 @@
+- name: Include repositories instalaltion tasks
+  ansible.builtin.import_tasks: install_repository.yml
+
+- name: Install Shibboleth on Debiban
+  when: ansible_os_family == 'Debian'
+  ansible.builtin.package:
+    name:
+      - shibboleth-sp-common
+      - shibboleth-sp-utils
+  notify: Restart shibboleth
+
+- name: Install Shibboleth on EL
+  when: ansible_os_family == 'RedHat'
+  ansible.builtin.package:
+    name: shibboleth-fastcgi
+  notify: Restart shibboleth
+
+- name: Enable Shibboleth daemon
+  ansible.builtin.service:
+    name: shibd
+    enabled: true
+
+- name: Include tasks if Nginx should be used
+  when: shibboleth_nginx_install | bool
+  block:
+    - name: Install socket Systemd services
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /etc/systemd/system/
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - shibauthorizer.service
+        - shibauthorizer.socket
+        - shibresponder.service
+        - shibresponder.socket
+      register: systemd_unit_files_installed
+      notify: Restart shibboleth
+
+    - name: Reload Systemd   # noqa no-handler
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when: systemd_unit_files_installed is changed
+
+    - name: Enable Shibboleth daemon and socket units
+      ansible.builtin.service:
+        name: "{{ item }}"
+        enabled: true
+      loop:
+        - shibauthorizer.service
+        - shibauthorizer.socket
+        - shibresponder.service
+        - shibresponder.socket
+
+- name: Install Nginx Shibboleth module
+  when: shibboleth_nginx_install | bool
+  ansible.builtin.package:
+    name: "{{ 'nginx-mod-http-shibboleth' if ansible_os_family == 'RedHat' else 'libnginx-mod-http-shibboleth' }}"
+  notify: Reload nginx

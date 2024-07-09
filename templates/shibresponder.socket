@@ -1,0 +1,11 @@
+[Unit]
+Description=Shibboleth FastCGI Responder socket
+
+[Socket]
+ListenStream=/run/shibboleth/shibresponder.sock
+SocketUser={{ 'shibd' if ansible_os_family == 'RedHat' else '_shibd' }}
+SocketGroup={{ 'shibd' if ansible_os_family == 'RedHat' else '_shibd' }}
+SocketMode=0666
+
+[Install]
+WantedBy=sockets.target

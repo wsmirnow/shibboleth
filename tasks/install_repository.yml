@@ -1,0 +1,88 @@
+- name: Install Shibboleth RPM repository
+  when: ansible_os_family == 'RedHat'
+  block:
+    - name: Install Shibboleth repository for EL8
+      ansible.builtin.yum_repository:
+        file: shibboleth
+        name: shibboleth
+        description: Shibboleth (RedHat 8)
+        mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/CentOS_8
+        enabled: true
+        gpgcheck: true
+        gpgkey:
+          - https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key
+          - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
+      when: >
+        ansible_distribution_major_version == "8"
+
+    - name: Install Shibboleth repository for EL9
+      ansible.builtin.yum_repository:
+        file: shibboleth
+        name: shibboleth
+        description: Shibboleth (rockylinux9)
+        mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/rockylinux9
+        enabled: true
+        gpgcheck: true
+        gpgkey:
+          - https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key
+          - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
+      when: >
+        ansible_distribution_major_version == "9"
+
+    - name: Install Shibboleth Nginx repository
+      ansible.builtin.yum_repository:
+        file: shibboleth-nginx
+        name: shibboleth-nginx
+        description: Shibboleth Nginx packages - RHEL$releasever
+        baseurl: https://elan-ev.github.io/shibboleth-nginx-repo/rhel/$releasever/
+        enabled: true
+        gpgcheck: true
+        gpgkey:
+          - https://elan-ev.github.io/shibboleth-nginx-repo/gpgkey.asc
+      when: shibboleth_nginx_install | bool
+
+    - name: Install EPEL repository
+      ansible.builtin.package:
+        name: epel-release
+
+- name: Install Shibboleth Debian repository
+  when: >
+    ansible_os_family == 'Debian' and shibboleth_nginx_install | bool
+  block:
+    # - name: Handle pure Debian system
+    #   when: ansible_distribution == 'Debian'
+    #   block:
+    #   - name: Install Shibboleth Nginx repository signing key
+    #     ansible.builtin.apt_key:
+    #       url: https://elan-ev.github.io/shibboleth-nginx-repo/gpgkey.asc
+    #       keyring: /etc/apt/trusted.gpg.d/nginx-mod-shibboleth.asc
+
+    #   - name: Install Shibboleth repository for Debian
+    #     ansible.builtin.apt_repository:
+    #       repo: deb https://elan-ev.github.io/shibboleth-nginx-repo/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} non-free
+    #       filename: nginx-mod-shibboleth
+
+    # - name: Handle Ubuntu system
+    #   when: ansible_distribution.iendswith('buntu')
+    #   block:
+    #   - name: Install Shibboleth Nginx repository signing key
+    #     ansible.builtin.apt_key:
+    #       url: https://elan-ev.github.io/shibboleth-nginx-repo/gpgkey.asc
+    #       keyring: /etc/apt/trusted.gpg.d/nginx-mod-shibboleth.asc
+
+    #   - name: Install Shibboleth repository for Debian
+    #     ansible.builtin.apt_repository:
+    #       repo: https://elan-ev.github.io/shibboleth-nginx-repo/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} multiverse
+    #       filename: nginx-mod-shibboleth
+
+    - name: Install Shibboleth Nginx repository signing key
+      ansible.builtin.apt_key:
+        url: https://elan-ev.github.io/shibboleth-nginx-repo/gpgkey.asc
+        keyring: /etc/apt/trusted.gpg.d/nginx-mod-shibboleth.asc
+
+    - name: Install Shibboleth repository for Debian
+      ansible.builtin.apt_repository:
+        repo: >
+          deb https://elan-ev.github.io/shibboleth-nginx-repo/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}
+          {{ ansible_distribution_release }} {{ 'multiverse' if ansible_distribution.iendswith('buntu') else 'non-free' }}
+        filename: nginx-mod-shibboleth

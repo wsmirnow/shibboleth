@@ -1,0 +1,15 @@
+[Unit]
+Description=Shibboleth FastCGI Authorizer
+After=network.target shibd.service
+Wants=shibd.service
+Requires=shibauthorizer.socket
+
+[Service]
+User={{ 'shibd' if ansible_os_family == 'RedHat' else '_shibd' }}
+Group={{ 'shibd' if ansible_os_family == 'RedHat' else '_shibd' }}
+WorkingDirectory=/etc/shibboleth
+ExecStart={{ '/usr/lib64/shibboleth/shibauthorizer' if ansible_os_family == 'RedHat' else '/usr/lib/x86_64-linux-gnu/shibboleth/shibauthorizer' }}
+StandardInput=socket
+
+[Install]
+WantedBy=multi-user.target
