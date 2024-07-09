@@ -12,19 +12,19 @@
 - name: Install Shibboleth on EL
   when: ansible_os_family == 'RedHat'
   ansible.builtin.package:
-    name: shibboleth-fastcgi
+    name: "{{ 'shibboleth-fastcgi' if shibboleth_fastcgi_support_enable | bool or shibboleth_nginx_module_install | bool else 'shibboleth' }}"
   notify: Restart shibboleth
 
 - name: Enable Shibboleth daemon
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: shibd
     enabled: true
 
 - name: Include tasks if Nginx should be used
-  when: shibboleth_nginx_install | bool
+  when: shibboleth_fastcgi_support_enable | bool or shibboleth_nginx_module_install | bool
   block:
     - name: Install socket Systemd services
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: "{{ item }}"
         dest: /etc/systemd/system/
         owner: root
@@ -44,7 +44,7 @@
       when: systemd_unit_files_installed is changed
 
     - name: Enable Shibboleth daemon and socket units
-      ansible.builtin.service:
+      ansible.builtin.systemd:
         name: "{{ item }}"
         enabled: true
       loop:
@@ -54,7 +54,7 @@
         - shibresponder.socket
 
 - name: Install Nginx Shibboleth module
-  when: shibboleth_nginx_install | bool
+  when: shibboleth_nginx_module_install | bool
   ansible.builtin.package:
     name: "{{ 'nginx-mod-http-shibboleth' if ansible_os_family == 'RedHat' else 'libnginx-mod-http-shibboleth' }}"
   notify: Reload nginx

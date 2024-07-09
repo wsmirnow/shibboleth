@@ -1,1 +1,10 @@
-shibboleth_nginx_install: false
+# Enable FastCGI support for Shibboleth by setting the value to true.
+# Shibboleth FastCGI is used by the Nginx Shibboleth module at least.
+# Default: false
+shibboleth_fastcgi_support_enable: false
+
+# Should the Nginx Shibboleth module be installed? Then set the value to true, otherwise to false.
+# Shibboleth Nginx module needs Shibboleth with FastCGI support.
+# Enbaling this option implicit set shibboleth_fastcgi_support_enable to true.
+# Default value: false
+shibboleth_nginx_module_install: false

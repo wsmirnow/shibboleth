@@ -1,0 +1,31 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    shibboleth_nginx_module_install: true
+  tasks:
+    - name: Stat Shibboleth binary
+      ansible.builtin.stat:
+        path: /usr/sbin/shibd
+      register: shibd_bin
+
+    - name: Test Shibboleth binary exists
+      ansible.builtin.assert:
+        that: shibd_bin.stat.exists
+
+    - name: Stat Shibboleth Nginx module configuration
+      when: shibboleth_nginx_module_install | bool
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          nginx -T | grep ngx_http_shibboleth_module.so | wc -l
+        executable: /bin/bash
+      changed_when: false
+      register: shib_nginx_module_config
+
+    - name: Test Shibboleth Nginx module configuration exists
+      when: shibboleth_nginx_module_install | bool
+      ansible.builtin.assert:
+        that: shib_nginx_module_config.stdout == '1'

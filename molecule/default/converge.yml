@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    shibboleth_fastcgi_support_enable: true
+    shibboleth_nginx_module_install: true
+  tasks:
+    - name: Install Nginx
+      ansible.builtin.package:
+        name: nginx
+      when: shibboleth_nginx_module_install | bool
+
+    - name: "Include shibboleth role"
+      ansible.builtin.include_role:
+        name: "shibboleth"

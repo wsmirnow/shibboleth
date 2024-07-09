@@ -1,0 +1,8 @@
+FROM {{ item.image }}
+
+# Install dependencies
+{% if "el" in item.name %}
+RUN dnf install --refresh -y systemd
+{% else %}
+RUN apt-get update && apt-get install -y ca-certificates gpg init python3 && apt-get clean
+{% endif %}

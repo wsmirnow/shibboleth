@@ -1,11 +1,11 @@
 - name: Restart shibboleth
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: shibd
     state: restarted
 
 - name: Restart shibboleth sockets
-  when: shibboleth_nginx_install | bool
-  ansible.builtin.service:
+  when: shibboleth_fastcgi_support_enable | bool or shibboleth_nginx_module_install | bool
+  ansible.builtin.systemd:
     name: "{{ item }}"
     state: restarted
   loop:
@@ -15,6 +15,6 @@
     - shibresponder.service
 
 - name: Reload nginx
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: nginx
     state: reloaded
