@@ -1,35 +1,35 @@
 ---
 driver:
-  name: podman
+  name: containers
+dependency:
+    name: galaxy
+    enabled: False
 platforms:
   - name: el9
     image: quay.io/centos/centos:stream9
     pre_build_image: false
-    # privileged: true
     command: /sbin/init
     tmpfs:
-      - /run
-      - /tmp
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
   - name: debian
     image: docker.io/debian:stable
     pre_build_image: false
-    # privileged: true
     command: /sbin/init
     tmpfs:
-      - /run
-      - /tmp
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
   - name: ubuntu
     image: docker.io/ubuntu:latest
     pre_build_image: false
-    # privileged: true
     command: /sbin/init
     tmpfs:
-      - /run
-      - /tmp
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
 lint: |
