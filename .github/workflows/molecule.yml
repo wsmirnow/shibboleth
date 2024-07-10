@@ -15,6 +15,9 @@ jobs:
       - name: install dependencies
         run: pip3 install -r .dev_requirements.txt
 
+      - name: linting
+        run: yamllint -c .yamllint . && ansible-lint
+
       - name: test playbook
         run: molecule test
         env:
