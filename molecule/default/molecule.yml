@@ -2,8 +2,8 @@
 driver:
   name: containers
 dependency:
-    name: galaxy
-    enabled: False
+  name: galaxy
+  enabled: false
 platforms:
   - name: el9
     image: quay.io/centos/centos:stream9

@@ -1,22 +1,21 @@
 ---
+name: molecule
 
-    name: molecule
-    
-    on:  # yamllint disable-line rule:truthy
-      - push
-      - pull_request
-    
-    jobs:
-      molecule:
-        runs-on: ubuntu-latest
-    
-        steps:
-          - uses: actions/checkout@v4
-    
-          - name: install dependencies
-            run: pip3 install -r .dev_requirements.txt
-    
-          - name: test playbook
-            run: molecule test
-            env:
-              PY_COLORS: '1'
+on:  # yamllint disable-line rule:truthy
+  - push
+  - pull_request
+
+jobs:
+  molecule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install dependencies
+        run: pip3 install -r .dev_requirements.txt
+
+      - name: test playbook
+        run: molecule test
+        env:
+          PY_COLORS: '1'
