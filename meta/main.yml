@@ -7,7 +7,7 @@ galaxy_info:
   company: ELAN e.V.
   description: Installs Shibboleth with or without FastCGI support and optional Nginx Shibboleth module.
   license: BSD-3-Clause
-  min_ansible_version: '2.11'
+  min_ansible_version: '2.13.9'
   galaxy_tags:
     - shibboleth
   platforms:
