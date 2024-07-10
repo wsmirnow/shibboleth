@@ -1,3 +1,4 @@
+---
 - name: Include repositories instalaltion tasks
   ansible.builtin.import_tasks: install_repository.yml
 

@@ -1,3 +1,4 @@
+---
 # Enable FastCGI support for Shibboleth by setting the value to true.
 # Shibboleth FastCGI is used by the Nginx Shibboleth module at least.
 # Default: false

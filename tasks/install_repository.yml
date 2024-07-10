@@ -1,3 +1,4 @@
+---
 - name: Install Shibboleth RPM repository
   when: ansible_os_family == 'RedHat'
   block:
