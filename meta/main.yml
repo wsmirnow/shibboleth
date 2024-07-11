@@ -17,8 +17,10 @@ galaxy_info:
         - '9'
     - name: Debian
       versions:
-        - all
+        - bookworm
     - name: Ubuntu
       versions:
-        - all
+        - focal
+        - jammy
+        - noble
 dependencies: []
