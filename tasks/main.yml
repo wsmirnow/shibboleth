@@ -54,8 +54,18 @@
         - shibresponder.service
         - shibresponder.socket
 
-- name: Install Nginx Shibboleth module
-  when: shibboleth_nginx_module_install | bool
+- name: Install Nginx Shibboleth module on Debian
+  when: shibboleth_nginx_module_install | bool and ansible_os_family == 'Debian'
   ansible.builtin.package:
-    name: "{{ 'nginx-mod-http-shibboleth' if ansible_os_family == 'RedHat' else 'libnginx-mod-http-shibboleth' }}"
+    name:
+      - libnginx-mod-http-shibboleth
+      - libnginx-mod-http-headers-more-filter
+  notify: Reload nginx
+
+- name: Install Nginx Shibboleth module on EL
+  when: shibboleth_nginx_module_install | bool and ansible_os_family == 'RedHat'
+  ansible.builtin.package:
+    name:
+      - nginx-mod-http-shibboleth
+      - nginx-mod-http-headers-more-filter
   notify: Reload nginx

@@ -1,4 +1,24 @@
 ---
+- name: Install Shibboleth Debian repository
+  when: >
+    ansible_os_family == 'Debian' and shibboleth_nginx_module_install | bool
+  block:
+    - name: Install Shibboleth Nginx repository signing key
+      ansible.builtin.get_url:
+        url: https://elan-ev.github.io/shibboleth-nginx-repo/gpgkey.asc
+        dest: /etc/apt/trusted.gpg.d/nginx-mod-shibboleth.asc
+        checksum: sha256:0e7cfae843aaa8166ec72eb3afafb126507f1743581431bf6e438af6edf75bb7
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install Shibboleth repository for Debian
+      ansible.builtin.apt_repository:
+        repo: >
+          deb https://elan-ev.github.io/shibboleth-nginx-repo/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}
+          {{ ansible_distribution_release }} {{ 'multiverse' if ansible_distribution.endswith('buntu') else 'non-free' }}
+        filename: nginx-mod-shibboleth
+
 - name: Install Shibboleth RPM repository
   when: ansible_os_family == 'RedHat'
   block:
@@ -47,23 +67,3 @@
     - name: Install EPEL repository
       ansible.builtin.package:
         name: epel-release
-
-- name: Install Shibboleth Debian repository
-  when: >
-    ansible_os_family == 'Debian' and shibboleth_nginx_module_install | bool
-  block:
-    - name: Install Shibboleth Nginx repository signing key
-      ansible.builtin.get_url:
-        url: https://elan-ev.github.io/shibboleth-nginx-repo/gpgkey.asc
-        dest: /etc/apt/trusted.gpg.d/nginx-mod-shibboleth.asc
-        checksum: sha256:0e7cfae843aaa8166ec72eb3afafb126507f1743581431bf6e438af6edf75bb7
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Install Shibboleth repository for Debian
-      ansible.builtin.apt_repository:
-        repo: >
-          deb https://elan-ev.github.io/shibboleth-nginx-repo/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}
-          {{ ansible_distribution_release }} {{ 'multiverse' if ansible_distribution.endswith('buntu') else 'non-free' }}
-        filename: nginx-mod-shibboleth
