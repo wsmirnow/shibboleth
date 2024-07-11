@@ -37,7 +37,7 @@
         - shibresponder.service
         - shibresponder.socket
       register: systemd_unit_files_installed
-      notify: Restart shibboleth
+      notify: Restart shibboleth sockets
 
     - name: Reload Systemd   # noqa no-handler
       ansible.builtin.systemd:

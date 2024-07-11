@@ -5,7 +5,6 @@
     state: restarted
 
 - name: Restart shibboleth sockets
-  when: shibboleth_fastcgi_support_enable | bool or shibboleth_nginx_module_install | bool
   ansible.builtin.systemd:
     name: "{{ item }}"
     state: restarted
