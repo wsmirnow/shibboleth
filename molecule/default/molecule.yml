@@ -5,15 +5,16 @@ dependency:
   name: galaxy
   enabled: false
 platforms:
-  - name: el8
-    image: quay.io/rockylinux/rockylinux:8
-    pre_build_image: false
-    command: /sbin/init
-    tmpfs:
-      "/tmp": "exec"
-      "/run": "rw,noexec,nosuid,nodev"
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  # GH Action for EL8 fails
+  # - name: el8
+  #   image: quay.io/rockylinux/rockylinux:8
+  #   pre_build_image: false
+  #   command: /sbin/init
+  #   tmpfs:
+  #     "/tmp": "exec"
+  #     "/run": "rw,noexec,nosuid,nodev"
+  #   volumes:
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
   - name: el9
     image: quay.io/centos/centos:stream9
     pre_build_image: false
