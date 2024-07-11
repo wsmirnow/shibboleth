@@ -2,7 +2,7 @@ FROM {{ item.image }}
 
 # Install dependencies
 {% if "el" in item.name %}
-RUN dnf install --refresh -y systemd
+RUN dnf install --refresh -y systemd {% if "el8" == item.name %}python3{% endif %}
 {% else %}
 RUN apt-get update && apt-get install -y ca-certificates gpg init python3 && apt-get clean
 {% endif %}
