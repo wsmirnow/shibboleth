@@ -18,8 +18,7 @@ This role has no dependencies.
     - Should the Nginx Shibboleth module be installed? Then set the value to true, otherwise to false. Shibboleth Nginx module needs Shibboleth with FastCGI support. Enbaling this option implicit set shibboleth_fastcgi_support_enable to true.
     - Default value: false
 
-Example Playbook
-----------------
+## Example Playbook
 
 Example of how to configure and use the role:
 
@@ -48,8 +47,7 @@ Example of how to configure and use the role:
       notify: Reload nginx
 ```
 
-Development Environment
-----------------
+## Development Environment
 
 For linting and role development you can use the tools defined in [development requirements](.dev_requirements.txt).
 You can quickly install them in a python virtual environment like this:
@@ -83,3 +81,9 @@ You may find some usefull arguments like `-p <plattform>` or `--destroy never` i
 ```bash
 molecule test --help
 ```
+
+## License
+[BSD-3-Clause](LICENSE)
+
+## Author
+[ELAN e.V.](https://elan-ev.de)
