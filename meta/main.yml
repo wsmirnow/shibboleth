@@ -18,9 +18,9 @@ galaxy_info:
     - name: Debian
       versions:
         - bookworm
+        - trixie
     - name: Ubuntu
       versions:
-        - focal
         - jammy
         - noble
 dependencies: []
