@@ -6,7 +6,7 @@ dependency:
   enabled: false
 platforms:
   # GH Action for EL8 fails
-  # - name: el8
+  # - name: shibboleth_el8
   #   image: quay.io/rockylinux/rockylinux:8
   #   pre_build_image: false
   #   command: /sbin/init
@@ -15,8 +15,8 @@ platforms:
   #     "/run": "rw,noexec,nosuid,nodev"
   #   volumes:
   #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: el9
-    image: quay.io/centos/centos:stream9
+  - name: shibboleth_el9
+    image: quay.io/rockylinux/rockylinux:9
     pre_build_image: false
     command: /sbin/init
     tmpfs:
@@ -24,7 +24,16 @@ platforms:
       "/run": "rw,noexec,nosuid,nodev"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: debian
+  - name: shibboleth_el10
+    image: quay.io/rockylinux/rockylinux:10
+    pre_build_image: false
+    command: /sbin/init
+    tmpfs:
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: shibboleth_debian
     image: docker.io/debian:stable
     pre_build_image: false
     command: /sbin/init
@@ -33,7 +42,7 @@ platforms:
       "/run": "rw,noexec,nosuid,nodev"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: ubuntu
+  - name: shibboleth_ubuntu
     image: docker.io/ubuntu:latest
     pre_build_image: false
     command: /sbin/init

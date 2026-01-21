@@ -22,33 +22,36 @@
 - name: Install Shibboleth RPM repository
   when: ansible_os_family == 'RedHat'
   block:
-    - name: Install Shibboleth repository for EL8
+    - name: Install Shibboleth repository for EL
       ansible.builtin.yum_repository:
         file: shibboleth
         name: shibboleth
-        description: Shibboleth (RedHat 8)
-        mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/CentOS_8
+        description: "{{ repo_data[dist_major_version_key]['description'] }}"
+        mirrorlist: "{{ repo_data[dist_major_version_key]['mirrorlist'] }}"
         enabled: true
         gpgcheck: true
-        gpgkey:
-          - https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key
-          - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
-      when: >
-        ansible_distribution_major_version == "8"
-
-    - name: Install Shibboleth repository for EL9
-      ansible.builtin.yum_repository:
-        file: shibboleth
-        name: shibboleth
-        description: Shibboleth (rockylinux9)
-        mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/rockylinux9
-        enabled: true
-        gpgcheck: true
-        gpgkey:
-          - https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key
-          - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
-      when: >
-        ansible_distribution_major_version == "9"
+        gpgkey: "{{ repo_data[dist_major_version_key]['gpgkey'] }}"
+      vars:
+        dist_major_version: "{{ ansible_distribution_major_version | default('') | string }}"
+        dist_major_version_key: "{{ dist_major_version if dist_major_version in ['8', '9'] else 'default' }}"
+        repo_data:
+          '8':
+            description: Shibboleth (RedHat 8)
+            mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/CentOS_8
+            gpgkey:
+              - https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key
+              - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
+          '9':
+            description: Shibboleth (rockylinux9)
+            mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/rockylinux9
+            gpgkey:
+              - https://shibboleth.net/downloads/service-provider/RPMS/repomd.xml.key
+              - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
+          'default':
+            description: Shibboleth (rockylinux$releasever)
+            mirrorlist: https://shibboleth.net/cgi-bin/mirrorlist.cgi/rockylinux$releasever
+            gpgkey:
+              - https://shibboleth.net/downloads/service-provider/RPMS/cantor.repomd.xml.key
 
     - name: Install Shibboleth Nginx repository
       ansible.builtin.yum_repository:
