@@ -1,7 +1,7 @@
 ---
 - name: Install Shibboleth Debian repository
   when: >
-    ansible_os_family == 'Debian' and shibboleth_nginx_module_install | bool
+    ansible_facts["os_family"] == 'Debian' and shibboleth_nginx_module_install | bool
   block:
     - name: Install Shibboleth Nginx repository signing key
       ansible.builtin.get_url:
@@ -15,12 +15,12 @@
     - name: Install Shibboleth repository for Debian
       ansible.builtin.apt_repository:
         repo: >
-          deb https://elan-ev.github.io/shibboleth-nginx-repo/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}
-          {{ ansible_distribution_release }} {{ 'multiverse' if ansible_distribution.endswith('buntu') else 'non-free' }}
+          deb https://elan-ev.github.io/shibboleth-nginx-repo/{{ ansible_facts["distribution"] | lower }}/{{ ansible_facts["distribution_release"] }}
+          {{ ansible_facts["distribution_release"] }} {{ 'multiverse' if ansible_facts["distribution"].endswith('buntu') else 'non-free' }}
         filename: nginx-mod-shibboleth
 
 - name: Install Shibboleth RPM repository
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts["os_family"] == 'RedHat'
   block:
     - name: Install Shibboleth repository for EL
       ansible.builtin.yum_repository:
@@ -32,7 +32,7 @@
         gpgcheck: true
         gpgkey: "{{ repo_data[dist_major_version_key]['gpgkey'] }}"
       vars:
-        dist_major_version: "{{ ansible_distribution_major_version | default('') | string }}"
+        dist_major_version: "{{ ansible_facts['distribution_major_version'] | default('') | string }}"
         dist_major_version_key: "{{ dist_major_version if dist_major_version in ['8', '9'] else 'default' }}"
         repo_data:
           '8':

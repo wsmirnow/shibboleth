@@ -1,9 +1,14 @@
 ---
+
+- name: Ensure Ansible facts are gathered
+  when: "'os_family' not in ansible_facts"
+  ansible.builtin.gather_facts:
+
 - name: Include repositories instalaltion tasks
   ansible.builtin.import_tasks: install_repository.yml
 
 - name: Install Shibboleth on Debiban
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
   ansible.builtin.package:
     name:
       - shibboleth-sp-common
@@ -11,7 +16,7 @@
   notify: Restart shibboleth
 
 - name: Install Shibboleth on EL
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts["os_family"] == 'RedHat'
   ansible.builtin.package:
     name: "{{ 'shibboleth-fastcgi' if shibboleth_fastcgi_support_enable | bool or shibboleth_nginx_module_install | bool else 'shibboleth' }}"
   notify: Restart shibboleth
@@ -55,7 +60,7 @@
         - shibresponder.socket
 
 - name: Install Nginx Shibboleth module on Debian
-  when: shibboleth_nginx_module_install | bool and ansible_os_family == 'Debian'
+  when: shibboleth_nginx_module_install | bool and ansible_facts["os_family"] == 'Debian'
   ansible.builtin.package:
     name:
       - libnginx-mod-http-shibboleth
@@ -63,7 +68,7 @@
   notify: Reload nginx
 
 - name: Install Nginx Shibboleth module on EL
-  when: shibboleth_nginx_module_install | bool and ansible_os_family == 'RedHat'
+  when: shibboleth_nginx_module_install | bool and ansible_facts["os_family"] == 'RedHat'
   ansible.builtin.package:
     name:
       - nginx-mod-http-shibboleth
